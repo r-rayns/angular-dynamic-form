@@ -1,0 +1,16 @@
+<div>
+  <form (ngSubmit)="onSubmit()" [formGroup]="form" class="form-list">
+
+    <div *ngFor="let control of controls" class="form-row">
+      <dyn-control [control]="control" [form]="form"></dyn-control>
+    </div>
+
+    <div>
+      <button type="submit" [disabled]="!form.valid">Save</button>
+    </div>
+  </form>
+
+  <div *ngIf="payLoad" class="form-row">
+    <strong>Saved the following values</strong><br>{{payLoad}}
+  </div>
+</div>

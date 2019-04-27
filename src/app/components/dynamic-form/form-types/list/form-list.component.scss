@@ -1,0 +1,16 @@
+.form-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .form-row {
+    flex-grow: 1;
+
+    dyn-control {
+      mat-form-field {
+        width: 25rem;
+      }
+    }
+  }
+
+}

@@ -1,0 +1,70 @@
+<div [formGroup]="form">
+
+  <div [ngSwitch]="control.controlType">
+
+    <ng-container *ngSwitchCase="'inputControl'">
+      <mat-form-field *ngIf="control.visible">
+        <input matInput
+               [placeholder]="formatPlaceholder(control)"
+               [formControlName]="control.key"
+               [value]="control.value"
+               [type]="control.type"
+               [id]="control.key">
+        <mat-error>
+          {{getErrorMessage(form.controls[control.key].errors, control.placeholder)}}
+        </mat-error>
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'checkboxControl'">
+      <mat-checkbox *ngIf="control.visible"
+                    [formControlName]="control.key"
+                    [checked]="control.checked"
+                    [id]="control.key">
+        {{formatPlaceholder(control)}}
+      </mat-checkbox>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'selectControl'">
+      <mat-form-field *ngIf="control.visible">
+        <mat-select [placeholder]="formatPlaceholder(control)"
+                    [formControlName]="control.key"
+                    [id]="control.key"
+                    (selectionChange)="control.onSelect($event)">
+          <mat-option *ngFor="let choice of control.choices" [value]="choice">
+            {{choice[control.propertyNameForDisplay]}}
+          </mat-option>
+        </mat-select>
+        <mat-error>
+          {{getErrorMessage(form.controls[control.key].errors, control.placeholder)}}
+        </mat-error>
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'multiSelectControl'">
+      <mat-form-field *ngIf="control.visible">
+        <mat-select [placeholder]="formatPlaceholder(control)"
+                    [formControlName]="control.key"
+                    [id]="control.key"
+                    (selectionChange)="control.onSelect($event)"
+                    multiple>
+          <mat-option *ngFor="let choice of control.choices" [value]="choice">
+            {{choice[control.propertyNameForDisplay]}}
+          </mat-option>
+        </mat-select>
+        <mat-error>
+          {{getErrorMessage(form.controls[control.key].errors, control.placeholder)}}
+        </mat-error>
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngIf="control.childButton">
+      <button mat-raised-button
+              color="primary"
+              (click)="control.childButton.onClick(form.get(control.key))">{{control.childButton.name}}</button>
+    </ng-container>
+
+
+  </div>
+
+</div>
