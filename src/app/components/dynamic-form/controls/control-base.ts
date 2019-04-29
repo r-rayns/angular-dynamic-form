@@ -5,7 +5,7 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { MultiSelectControlInterface } from './types/multi-select-control';
 import { Control } from './control-types-enums';
 
-export class ControlBase<T> {
+export abstract class ControlBase<T> {
   value: T;
   key: string;
   placeholder: string;
@@ -19,7 +19,7 @@ export class ControlBase<T> {
   childButton: { name: string, onClick: (control: AbstractControl) => void };
   validators: ValidatorFn[];
 
-  constructor(options: BasicControl<T>) {
+  protected constructor(options: BasicControl<T>) {
     this.value = options.value || null;
     this.key = options.key || '';
     this.placeholder = options.placeholder || '';

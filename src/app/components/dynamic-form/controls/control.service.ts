@@ -50,5 +50,3 @@ export class ControlService {
     formControl.updateValueAndValidity();
   }
 }
-
-//FormControl(this.value, getSyncValidators(), getAsyncValidators())
