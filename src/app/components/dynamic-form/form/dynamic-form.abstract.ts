@@ -1,4 +1,4 @@
-import { AfterViewInit, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Input } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 
 import { ConditionalIf, ControlBase } from '../controls/control-base';
@@ -7,20 +7,27 @@ import { SelectControl } from '../controls/types/select-control';
 import { MultiSelectControl } from '../controls/types/multi-select-control';
 import { Control } from '../controls/control-types-enums';
 
-export class DynamicFormAbstract implements OnInit, AfterViewInit {
+export class DynamicFormAbstract implements AfterViewInit {
 
-  @Input() controls: ControlBase<any>[] = [];
-  private selectControls: Control[] = [Control.SELECT, Control.MULTISELECT];
+  @Input() set controls(controls: ControlBase<any>[]) {
+    if (controls && controls.length > 0) {
+      this.formControls = controls;
+      this.setupForm();
+    }
+  }
+
+  public formControls: ControlBase<any>[] = [];
+  private selectControls: Control[] = [ Control.SELECT, Control.MULTISELECT ];
   form: FormGroup;
   payLoad = '';
 
   constructor(protected controlService: ControlService) {
   }
 
-  ngOnInit() {
-    this.form = this.controlService.toFormGroup(this.controls);
+  setupForm() {
+    this.form = this.controlService.toFormGroup(this.formControls);
     this.formUpdateCycle();
-    this.controls.forEach((control) => {
+    this.formControls.forEach((control) => {
       if (this.selectControls.includes(control.controlType) && control.visible) {
         this.updateSelectChoices(control as SelectControl);
       }
@@ -40,7 +47,7 @@ export class DynamicFormAbstract implements OnInit, AfterViewInit {
   }
 
   formUpdateCycle(): void {
-    this.controls.forEach((control) => {
+    this.formControls.forEach((control) => {
       if (control.visibleIf) {
         this.updateVisibleIf(control);
       }
@@ -62,9 +69,14 @@ export class DynamicFormAbstract implements OnInit, AfterViewInit {
   }
 
   updateRequiredIf(control: ControlBase<any>): void {
-    this.loopOverConditionalGroups(control, control.requiredIf, this.makeControlRequired, this.makeControlOptional)
+    this.loopOverConditionalGroups(control, control.requiredIf, this.makeControlRequired, this.makeControlOptional);
   }
 
+  // Conditional Group(s) are defined on the control object. Each group is an array of objects, the keys in the object
+  // are strings that relate to a key of a sibling control, the property assigned to each key is a function that
+  // returns a boolean value. The function takes the value of the sibling control (defined in the key) as an argument
+  // and uses it to evaluate the condition and returns a boolean value.
+  // The outcome of the evaluation effects some properties on the control on which the conditional group(s) is/are defined.
   loopOverConditionalGroups(control: ControlBase<any>,
                             conditional: ConditionalIf[],
                             onConditionTrue: (control) => void,
@@ -81,6 +93,8 @@ export class DynamicFormAbstract implements OnInit, AfterViewInit {
     }
   }
 
+  // Takes a conditional group and recursively evaluates each function assigned to each property in the object
+  // Returns truthy if all functions (conditions) evaluate to true
   checkValuesOfConditionalGroup(conditionalGroup: ConditionalIf, siblingKeys: string[], index = 0): boolean {
     if (siblingKeys.length === index) {
       return true;

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BasicControl } from '../../dynamic-form/controls/control-base';
+import { BasicControl, ControlBase } from '../../dynamic-form/controls/control-base';
 import { InputControl } from '../../dynamic-form/controls/types/input-control';
 import { emailValidator, nameValidator } from '../../../utils/common-form-validators';
 import { CheckboxControl } from '../../dynamic-form/controls/types/checkbox-control';
@@ -12,7 +12,7 @@ import { SelectControl } from '../../dynamic-form/controls/types/select-control'
   providers: []
 })
 export class FormListDemoComponent {
-  controls: BasicControl<any>[];
+  controls: ControlBase<any>[];
 
   backpackEquipment: { item: string, description: string }[] = [
     {
